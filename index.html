@@ -4,62 +4,81 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <script src="https://cdn.tailwindcss.com"></script>
-  <script type="module" src="./src/main.ts"></script>
   <title>Råtthjälpen Membership</title>
+  <style>
+    body { background-color: #88c4e6; } /* Very light blue background */
+    .bg-custom { background-color: #88c4e6; }
+    .text-custom { color: #88c4e6; }
+    .border-custom { border-color: #88c4e6; }
+    .focus-border-custom:focus { border-color: #88c4e6; }
+
+    /* Smooth transition for floating labels */
+    .floating-label-input:placeholder-shown + label {
+      transform: translateY(1.2rem) scale(1);
+      color: #94a3b8;
+    }
+    .floating-label-input:focus + label,
+    .floating-label-input:not(:placeholder-shown) + label {
+      transform: translateY(-0.5rem) scale(0.85);
+      color: #88c4e6;
+    }
+  </style>
 </head>
-<body class="bg-blue-50 flex items-center justify-center min-h-screen p-4 md:p-12">
+<body class="flex items-center justify-center min-h-screen p-4 md:p-8">
 
-<div class="max-w-2xl w-full bg-white rounded-3xl shadow-2xl overflow-hidden border border-blue-100 transition-all">
+<div class="w-full max-w-xl bg-white rounded-[2rem] shadow-2xl shadow-blue-200/50 overflow-hidden border border-white">
 
-  <div class="bg-blue-600 p-10 text-center">
-    <h1 class="text-3xl md:text-4xl font-extrabold text-white tracking-tight">Råtthjälpen</h1>
-    <p class="text-blue-100 mt-3 text-lg">Apply for membership and make a difference</p>
+  <div class=" px-10 pt-12 pb-4 flex flex-col items-center">
+    <img src="./logo.png" alt="Råtthjälpen" class="h-24 w-auto drop-shadow-md">
+    <p class="uppercase tracking-[0.2em] mt-6">Become a member today!</p>
   </div>
 
-  <form id="membershipForm" class="p-8 md:p-12 space-y-8">
-    <div class="grid grid-cols-1 gap-8">
+  <main class="px-8 pb-12 md:px-12">
+    <form id="membershipForm" class="space-y-8">
 
-      <div>
-        <label class="block text-sm font-bold text-blue-900 uppercase tracking-wide mb-2">Full Name</label>
-        <input type="text" name="name" required placeholder="Enter your full name"
-               class="w-full px-6 py-4 rounded-xl border-2 border-blue-50 focus:border-blue-400 focus:ring-4 focus:ring-blue-100 outline-none transition-all text-lg">
+      <div class="relative">
+        <input type="text" name="name" required placeholder=" "
+               class="floating-label-input w-full pt-6 pb-2 bg-transparent border-b-2 border-slate-100 outline-none focus:border-custom transition-all text-lg">
+        <label class="absolute left-0 top-0 transition-all pointer-events-none font-medium">
+          Full Name
+        </label>
       </div>
 
-      <div>
-        <label class="block text-sm font-bold text-blue-900 uppercase tracking-wide mb-2">Email Address</label>
-        <input type="email" name="email" required placeholder="email@example.com"
-               class="w-full px-6 py-4 rounded-xl border-2 border-blue-50 focus:border-blue-400 focus:ring-4 focus:ring-blue-100 outline-none transition-all text-lg">
+      <div class="relative">
+        <input type="email" name="email" required placeholder=" "
+               class="floating-label-input w-full pt-6 pb-2 bg-transparent border-b-2 border-slate-100 outline-none focus:border-custom transition-all text-lg">
+        <label class="absolute left-0 top-0 transition-all pointer-events-none font-medium">
+          Email Address
+        </label>
       </div>
 
-      <div>
-        <label class="block text-sm font-bold text-blue-900 uppercase tracking-wide mb-2">Country</label>
-        <select name="country" required
-                class="w-full px-6 py-4 rounded-xl border-2 border-blue-50 focus:border-blue-400 focus:ring-4 focus:ring-blue-100 outline-none transition-all text-lg bg-white appearance-none cursor-pointer">
-          <option value="" disabled selected>Select your country</option>
-          <option value="Sweden">Sweden</option>
-          <option value="Norway">Norway</option>
-          <option value="Denmark">Denmark</option>
-          <option value="Finland">Finland</option>
-          <option value="United Kingdom">United Kingdom</option>
-          <option value="USA">USA</option>
-          <option value="Other">Other</option>
-        </select>
+      <div class="relative">
+        <div class="relative">
+          <input type="text" id="countryInput" name="country" required placeholder=" " autocomplete="off"
+                 class="floating-label-input w-full pt-6 pb-2 bg-transparent border-b-2 border-slate-100 outline-none focus:border-custom transition-all text-lg">
+          <label class="absolute left-0 top-0 transition-all pointer-events-none font-medium">
+            Search Country
+          </label>
+        </div>
+        <ul id="countryList" class="absolute z-50 w-full max-h-60 mt-1 overflow-y-auto bg-white shadow-2xl rounded-xl border border-slate-100 hidden">
+        </ul>
       </div>
+
+      <button type="submit" id="submitBtn"
+              class="w-full py-5 bg-custom text-white font-extrabold rounded-2xl shadow-lg hover:shadow-blue-200/50 transition-all active:scale-[0.97] text-lg uppercase tracking-wider mt-4">
+        Submit Application
+      </button>
+    </form>
+
+    <div id="successMsg" class="hidden py-10 text-center animate-[fadeIn_0.5s_ease-in-out]">
+      <div class="w-20 h-20 bg-blue-50 text-custom rounded-full flex items-center justify-center mx-auto mb-6 text-4xl">✓</div>
+      <h2 class="text-2xl font-bold text-slate-800">Application Sent</h2>
+      <p class="text-slate-500 mt-2">Thank you for your interest in Råtthjälpen!</p>
+      <button onclick="location.reload()" class="mt-8 text-custom font-bold hover:underline">Send another one</button>
     </div>
-
-    <button type="submit" id="submitBtn"
-            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-5 rounded-2xl shadow-xl shadow-blue-200 transition-all transform active:scale-[0.98] text-xl mt-4">
-      Submit Application
-    </button>
-  </form>
-
-  <div id="successMsg" class="hidden p-12 text-center animate-fade-in">
-    <div class="text-6xl mb-4">✅</div>
-    <h2 class="text-2xl font-bold text-blue-900">Thank you!</h2>
-    <p class="text-blue-600 mt-2">Your request has been sent to Råtthjälpen.</p>
-    <button onclick="location.reload()" class="mt-6 text-blue-500 font-semibold underline">Send another</button>
-  </div>
+  </main>
 </div>
 
+<script type="module" src="./src/main.ts"></script>
 </body>
 </html>

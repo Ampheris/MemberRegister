@@ -1,49 +1,82 @@
+const countries: string[] = [
+    "Sweden", "Norway", "Denmark", "Finland", "Iceland",
+    "Germany", "France", "United Kingdom", "USA", "Canada",
+    "Australia", "Netherlands", "Belgium", "Switzerland", "Austria"
+].sort();
+
+const countryInput = document.querySelector<HTMLInputElement>('#countryInput');
+const countryList = document.querySelector<HTMLUListElement>('#countryList');
 const form = document.querySelector<HTMLFormElement>('#membershipForm');
-const successMsg = document.querySelector<HTMLDivElement>('#successMsg');
-const submitBtn = document.querySelector<HTMLButtonElement>('#submitBtn');
+const scriptURL = 'YOUR_GOOGLE_WEB_APP_URL_HERE';
 
-// Replace with your actual Google Deployment URL
-const scriptURL = 'https://script.google.com/macros/s/AKfycbz-ldqxzQVJV9etyGN6zqIvNx2sUhjrPFz93Mu22r3lW7PUC-8hdn7sVXtV3VoCO2bI/exec';
+// --- Search & Dropdown Logic ---
 
-form?.addEventListener('submit', async (e: SubmitEvent) => {
-    e.preventDefault();
-    if (!submitBtn || !form || !successMsg) {
-        console.error("Elements missing!");
-        return;
+countryInput?.addEventListener('input', (e) => {
+    const val = (e.target as HTMLInputElement).value.toLowerCase();
+    if (!countryList) return;
+
+    // Clear previous list
+    countryList.innerHTML = '';
+
+    if (val.length > 0) {
+        const filtered = countries.filter(c => c.toLowerCase().includes(val));
+
+        if (filtered.length > 0) {
+            filtered.forEach(country => {
+                const li = document.createElement('li');
+                li.className = "px-5 py-3 hover:bg-blue-50 cursor-pointer text-slate-700 transition-colors border-b border-slate-50 last:border-0";
+                li.textContent = country;
+
+                // When a country is clicked
+                li.onclick = () => {
+                    countryInput.value = country;
+                    countryList.classList.add('hidden');
+                };
+
+                countryList.appendChild(li);
+            });
+            countryList.classList.remove('hidden');
+        } else {
+            countryList.classList.add('hidden');
+        }
+    } else {
+        countryList.classList.add('hidden');
     }
+});
 
-    // Loading State
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = `
-        <span class="flex items-center justify-center">
-            <svg class="animate-spin h-5 w-5 mr-3 text-white" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            Processing...
-        </span>
-    `;
+// Hide dropdown if user clicks outside
+document.addEventListener('click', (e) => {
+    if (e.target !== countryInput) {
+        countryList?.classList.add('hidden');
+    }
+});
+
+// --- Form Submission Logic ---
+
+form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.querySelector<HTMLButtonElement>('#submitBtn');
+    if (!btn) return;
+
+    btn.disabled = true;
+    btn.innerText = "Submitting...";
 
     try {
-        console.log("Sending data to Google Sheets...");
-
+        // Note: 'no-cors' is used because Google Apps Script doesn't return CORS headers
         await fetch(scriptURL, {
             method: 'POST',
-            mode: 'no-cors', // <--- This is the magic line
-            cache: 'no-cache',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            mode: 'no-cors',
             body: new FormData(form)
         });
 
-        // Since 'no-cors' won't let us read the response,
-        // we assume success if the code reaches this line without throwing.
+        // Show success message
         form.classList.add('hidden');
-        successMsg.classList.remove('hidden');
+        document.querySelector('#successMsg')?.classList.remove('hidden');
 
-    } catch (error) {
-        console.error('Submission error:', error);
-        alert('Something went wrong. Please try again.');
+    } catch (err) {
+        console.error(err);
+        alert("There was an error sending your application. Please try again.");
+        btn.disabled = false;
+        btn.innerText = "Submit Application";
     }
 });
