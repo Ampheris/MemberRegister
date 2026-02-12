@@ -4,15 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <script src="https://cdn.tailwindcss.com"></script>
-  <title>Råtthjälpen Membership</title>
+  <title>Råtthjälpen Portal</title>
   <style>
-    body { background-color: #88c4e6; } /* Very light blue background */
+    body { background-color: #88c4e6; }
     .bg-custom { background-color: #88c4e6; }
     .text-custom { color: #88c4e6; }
     .border-custom { border-color: #88c4e6; }
-    .focus-border-custom:focus { border-color: #88c4e6; }
 
-    /* Smooth transition for floating labels */
+    /* Floating Label Logic */
     .floating-label-input:placeholder-shown + label {
       transform: translateY(1.2rem) scale(1);
       color: #94a3b8;
@@ -22,60 +21,90 @@
       transform: translateY(-0.5rem) scale(0.85);
       color: #88c4e6;
     }
+
+    /* Hide scrollbar for clean dropdown */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade { animation: fadeIn 0.4s ease-out forwards; }
   </style>
 </head>
 <body class="flex items-center justify-center min-h-screen p-4 md:p-8">
 
-<div class="w-full max-w-xl bg-white rounded-[2rem] shadow-2xl shadow-blue-200/50 overflow-hidden border border-white">
+<div class="w-full max-w-xl bg-white rounded-[2.5rem] shadow-2xl overflow-hidden border border-white">
 
-  <div class=" px-10 pt-12 pb-4 flex flex-col items-center">
-    <img src="./logo.png" alt="Råtthjälpen" class="h-24 w-auto drop-shadow-md">
-    <p class="uppercase tracking-[0.2em] mt-6">Become a member today!</p>
+  <div class="flex border-b border-slate-100 bg-slate-50/50">
+    <button id="viewMembers" class="flex-1 py-5 font-bold text-custom border-b-4 border-custom transition-all">Member</button>
+    <button id="viewStats" class="flex-1 py-5 font-bold text-slate-400 border-b-4 border-transparent transition-all">Scores</button>
+    <button id="viewBoard" class="flex-1 py-5 font-bold text-slate-400 border-b-4 border-transparent transition-all">Top 10</button>
   </div>
 
-  <main class="px-8 pb-12 md:px-12">
-    <form id="membershipForm" class="space-y-8">
+  <div class="px-10 pt-8 pb-2 flex flex-col items-center">
+    <img src="./logo.png" alt="Råtthjälpen" class="h-20 w-auto drop-shadow-sm">
+  </div>
 
+  <main class="px-8 pb-12 md:px-12 relative min-h-[400px]">
+
+    <form id="membershipForm" class="space-y-8 animate-fade">
+      <input type="hidden" name="form_type" value="membership">
       <div class="relative">
-        <input type="text" name="name" required placeholder=" "
-               class="floating-label-input w-full pt-6 pb-2 bg-transparent border-b-2 border-slate-100 outline-none focus:border-custom transition-all text-lg">
-        <label class="absolute left-0 top-0 transition-all pointer-events-none font-medium">
-          Full Name
-        </label>
+        <input type="text" name="name" required placeholder=" " class="floating-label-input w-full pt-6 pb-2 bg-transparent border-b-2 border-slate-100 outline-none focus:border-custom transition-all text-lg">
+        <label class="absolute left-0 top-0 transition-all pointer-events-none font-medium text-slate-400">Full Name</label>
       </div>
-
       <div class="relative">
-        <input type="email" name="email" required placeholder=" "
-               class="floating-label-input w-full pt-6 pb-2 bg-transparent border-b-2 border-slate-100 outline-none focus:border-custom transition-all text-lg">
-        <label class="absolute left-0 top-0 transition-all pointer-events-none font-medium">
-          Email Address
-        </label>
+        <input type="email" name="email" required placeholder=" " class="floating-label-input w-full pt-6 pb-2 bg-transparent border-b-2 border-slate-100 outline-none focus:border-custom transition-all text-lg">
+        <label class="absolute left-0 top-0 transition-all pointer-events-none font-medium text-slate-400">Email Address</label>
       </div>
-
       <div class="relative">
-        <div class="relative">
-          <input type="text" id="countryInput" name="country" required placeholder=" " autocomplete="off"
-                 class="floating-label-input w-full pt-6 pb-2 bg-transparent border-b-2 border-slate-100 outline-none focus:border-custom transition-all text-lg">
-          <label class="absolute left-0 top-0 transition-all pointer-events-none font-medium">
-            Search Country
-          </label>
-        </div>
-        <ul id="countryList" class="absolute z-50 w-full max-h-60 mt-1 overflow-y-auto bg-white shadow-2xl rounded-xl border border-slate-100 hidden">
-        </ul>
+        <input type="text" name="country" required placeholder=" " class="floating-label-input w-full pt-6 pb-2 bg-transparent border-b-2 border-slate-100 outline-none focus:border-custom transition-all text-lg">
+        <label class="absolute left-0 top-0 transition-all pointer-events-none font-medium text-slate-400">Country</label>
       </div>
-
-      <button type="submit" id="submitBtn"
-              class="w-full py-5 bg-custom text-white font-extrabold rounded-2xl shadow-lg hover:shadow-blue-200/50 transition-all active:scale-[0.97] text-lg uppercase tracking-wider mt-4">
-        Submit Application
-      </button>
+      <button type="submit" class="w-full py-5 bg-custom text-white font-black rounded-2xl shadow-lg active:scale-95 transition-all uppercase tracking-widest mt-4">Register Member</button>
     </form>
 
-    <div id="successMsg" class="hidden py-10 text-center animate-[fadeIn_0.5s_ease-in-out]">
-      <div class="w-20 h-20 bg-blue-50 text-custom rounded-full flex items-center justify-center mx-auto mb-6 text-4xl">✓</div>
-      <h2 class="text-2xl font-bold text-slate-800">Application Sent</h2>
-      <p class="text-slate-500 mt-2">Thank you for your interest in Råtthjälpen!</p>
-      <button onclick="location.reload()" class="mt-8 text-custom font-bold hover:underline">Send another one</button>
+    <form id="statsForm" class="hidden space-y-8 animate-fade">
+      <input type="hidden" name="form_type" value="game_stats">
+      <div class="relative">
+        <input type="text" name="name" required placeholder=" " class="floating-label-input w-full pt-6 pb-2 bg-transparent border-b-2 border-slate-100 outline-none focus:border-custom transition-all text-lg">
+        <label class="absolute left-0 top-0 transition-all pointer-events-none font-medium text-slate-400">Player Name</label>
+      </div>
+      <div class="relative">
+        <input type="email" name="email" required placeholder=" " class="floating-label-input w-full pt-6 pb-2 bg-transparent border-b-2 border-slate-100 outline-none focus:border-custom transition-all text-lg">
+        <label class="absolute left-0 top-0 transition-all pointer-events-none font-medium text-slate-400">Player Email</label>
+      </div>
+      <div class="grid grid-cols-3 gap-4">
+        <div class="text-center">
+          <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Flappy Rat</label>
+          <input type="number" name="flappy_rat" placeholder="0" class="w-full text-center border-b-2 border-slate-100 py-2 outline-none focus:border-custom text-xl font-bold">
+        </div>
+        <div class="text-center">
+          <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Nut Score</label>
+          <input type="number" name="nut_score" placeholder="0" class="w-full text-center border-b-2 border-slate-100 py-2 outline-none focus:border-custom text-xl font-bold">
+        </div>
+        <div class="text-center">
+          <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Ring Toss</label>
+          <input type="number" name="ring_toss" placeholder="0" class="w-full text-center border-b-2 border-slate-100 py-2 outline-none focus:border-custom text-xl font-bold">
+        </div>
+      </div>
+      <button type="submit" class="w-full py-5 bg-custom text-white font-black rounded-2xl shadow-lg active:scale-95 transition-all uppercase tracking-widest mt-4">Update Scores</button>
+    </form>
+
+    <div id="leaderboardView" class="hidden space-y-4 animate-fade">
+      <h3 class="text-center font-black text-slate-300 uppercase tracking-[0.3em] text-sm py-4">Leaderboard</h3>
+      <div id="leaderboardList" class="space-y-3">
+      </div>
     </div>
+
+    <div id="successMsg" class="hidden py-16 text-center animate-fade">
+      <div class="w-24 h-24 bg-blue-50 text-custom rounded-full flex items-center justify-center mx-auto mb-6 text-5xl">✓</div>
+      <h2 class="text-3xl font-black text-slate-800">Success!</h2>
+      <p class="text-slate-500 mt-2 text-lg">Data has been synced to the sheet.</p>
+      <button onclick="location.reload()" class="mt-10 bg-slate-100 px-8 py-3 rounded-full font-bold text-slate-600 hover:bg-slate-200 transition-all">New Entry</button>
+    </div>
+
   </main>
 </div>
 

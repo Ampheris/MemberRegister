@@ -1,82 +1,102 @@
-const countries: string[] = [
-    "Sweden", "Norway", "Denmark", "Finland", "Iceland",
-    "Germany", "France", "United Kingdom", "USA", "Canada",
-    "Australia", "Netherlands", "Belgium", "Switzerland", "Austria"
-].sort();
+/**
+ * Råtthjälpen Comprehensive Portal Logic
+ * Fetches Countries, Handles View Toggling, Autocomplete, and Score Updates
+ */
 
-const countryInput = document.querySelector<HTMLInputElement>('#countryInput');
-const countryList = document.querySelector<HTMLUListElement>('#countryList');
-const form = document.querySelector<HTMLFormElement>('#membershipForm');
-const scriptURL = 'YOUR_GOOGLE_WEB_APP_URL_HERE';
+const scriptURL = 'https://script.google.com/macros/s/AKfycbz-ldqxzQVJV9etyGN6zqIvNx2sUhjrPFz93Mu22r3lW7PUC-8hdn7sVXtV3VoCO2bI/exec';
 
-// --- Search & Dropdown Logic ---
+// --- View Navigation Selectors ---
+const views = {
+    members: document.querySelector('#membershipForm'),
+    stats: document.querySelector('#statsForm'),
+    board: document.querySelector('#leaderboardView'),
+    success: document.querySelector('#successMsg')
+};
 
-countryInput?.addEventListener('input', (e) => {
-    const val = (e.target as HTMLInputElement).value.toLowerCase();
-    if (!countryList) return;
+const navBtns = {
+    members: document.querySelector('#viewMembers'),
+    stats: document.querySelector('#viewStats'),
+    board: document.querySelector('#viewBoard')
+};
 
-    // Clear previous list
-    countryList.innerHTML = '';
+// --- View Switching Logic ---
+function switchView(target: keyof typeof navBtns) {
+    Object.values(views).forEach(v => v?.classList.add('hidden'));
+    Object.values(navBtns).forEach(b => {
+        b?.classList.remove('text-custom', 'border-custom');
+        b?.classList.add('text-slate-400', 'border-transparent');
+    });
 
-    if (val.length > 0) {
-        const filtered = countries.filter(c => c.toLowerCase().includes(val));
-
-        if (filtered.length > 0) {
-            filtered.forEach(country => {
-                const li = document.createElement('li');
-                li.className = "px-5 py-3 hover:bg-blue-50 cursor-pointer text-slate-700 transition-colors border-b border-slate-50 last:border-0";
-                li.textContent = country;
-
-                // When a country is clicked
-                li.onclick = () => {
-                    countryInput.value = country;
-                    countryList.classList.add('hidden');
-                };
-
-                countryList.appendChild(li);
-            });
-            countryList.classList.remove('hidden');
-        } else {
-            countryList.classList.add('hidden');
-        }
+    if (target === 'board') {
+        views.board?.classList.remove('hidden');
+        refreshLeaderboard();
     } else {
-        countryList.classList.add('hidden');
+        views[target]?.classList.remove('hidden');
     }
-});
 
-// Hide dropdown if user clicks outside
-document.addEventListener('click', (e) => {
-    if (e.target !== countryInput) {
-        countryList?.classList.add('hidden');
-    }
-});
+    navBtns[target]?.classList.add('text-custom', 'border-custom');
+    navBtns[target]?.classList.remove('text-slate-400', 'border-transparent');
+}
 
-// --- Form Submission Logic ---
+navBtns.members?.addEventListener('click', () => switchView('members'));
+navBtns.stats?.addEventListener('click', () => switchView('stats'));
+navBtns.board?.addEventListener('click', () => switchView('board'));
 
-form?.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const btn = document.querySelector<HTMLButtonElement>('#submitBtn');
-    if (!btn) return;
-
-    btn.disabled = true;
-    btn.innerText = "Submitting...";
+// --- Leaderboard Fetch ---
+async function refreshLeaderboard() {
+    const list = document.querySelector('#leaderboardList');
+    if (!list) return;
+    list.innerHTML = `<div class="py-10 text-center text-slate-400 italic animate-pulse">Fetching the Hall of Fame...</div>`;
 
     try {
-        // Note: 'no-cors' is used because Google Apps Script doesn't return CORS headers
-        await fetch(scriptURL, {
-            method: 'POST',
-            mode: 'no-cors',
-            body: new FormData(form)
-        });
+        const res = await fetch(scriptURL);
+        const data = await res.json();
 
-        // Show success message
-        form.classList.add('hidden');
-        document.querySelector('#successMsg')?.classList.remove('hidden');
+        if (data.length === 0) {
+            list.innerHTML = `<p class="text-center text-slate-400 py-10">No scores yet!</p>`;
+            return;
+        }
 
-    } catch (err) {
-        console.error(err);
-        alert("There was an error sending your application. Please try again.");
-        btn.disabled = false;
-        btn.innerText = "Submit Application";
+        list.innerHTML = data.map((p: any, i: number) => `
+      <div class="flex items-center justify-between p-5 bg-slate-50 rounded-2xl border border-slate-100">
+        <div class="flex items-center gap-4">
+          <span class="flex items-center justify-center w-8 h-8 ${i === 0 ? 'bg-yellow-400 text-white' : 'bg-white text-slate-400'} rounded-full font-black text-xs">
+            ${i === 0 ? '👑' : i + 1}
+          </span>
+          <div>
+            <p class="font-bold text-slate-800">${p.name}</p>
+            <p class="text-[10px] text-slate-400 uppercase">F: ${p.flappy} | N: ${p.nut} | T: ${p.toss}</p>
+          </div>
+        </div>
+        <div class="text-right">
+          <p class="text-2xl font-black text-custom leading-none">${p.total}</p>
+        </div>
+      </div>
+    `).join('');
+    } catch (e) {
+        list.innerHTML = `<p class="text-center text-red-400 py-10">Error loading scores.</p>`;
     }
-});
+}
+
+// --- Form Submission Logic ---
+const handleSub = async (e: SubmitEvent) => {
+    e.preventDefault();
+    const form = e.target as HTMLFormElement;
+    const btn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+    const original = btn.innerText;
+
+    btn.disabled = true;
+    btn.innerText = "SYNCING...";
+
+    try {
+        await fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: new FormData(form) });
+        form.classList.add('hidden');
+        views.success?.classList.remove('hidden');
+    } catch (err) {
+        alert("Connection error. Check your Google Script deployment.");
+        btn.disabled = false;
+        btn.innerText = original;
+    }
+};
+
+[views.members, views.stats].forEach(f => f?.addEventListener('submit', handleSub as any));
