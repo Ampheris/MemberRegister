@@ -7,8 +7,10 @@ const scriptURL = 'https://script.google.com/macros/s/AKfycbz-ldqxzQVJV9etyGN6zq
 
 form?.addEventListener('submit', async (e: SubmitEvent) => {
     e.preventDefault();
-
-    if (!submitBtn || !form || !successMsg) return;
+    if (!submitBtn || !form || !successMsg) {
+        console.error("Elements missing!");
+        return;
+    }
 
     // Loading State
     submitBtn.disabled = true;
