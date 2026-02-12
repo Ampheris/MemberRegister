@@ -25,21 +25,25 @@ form?.addEventListener('submit', async (e: SubmitEvent) => {
     `;
 
     try {
-        const response = await fetch(scriptURL, {
+        console.log("Sending data to Google Sheets...");
+
+        await fetch(scriptURL, {
             method: 'POST',
+            mode: 'no-cors', // <--- This is the magic line
+            cache: 'no-cache',
+            headers: {
+                'Content-Type': 'application/json',
+            },
             body: new FormData(form)
         });
 
-        if (response.ok) {
-            form.classList.add('hidden');
-            successMsg.classList.remove('hidden');
-        } else {
-            throw new Error('Network response was not ok.');
-        }
+        // Since 'no-cors' won't let us read the response,
+        // we assume success if the code reaches this line without throwing.
+        form.classList.add('hidden');
+        successMsg.classList.remove('hidden');
+
     } catch (error) {
-        console.error('Error!', error);
-        alert('Something went wrong. Please check your connection and try again.');
-        submitBtn.disabled = false;
-        submitBtn.innerText = 'Submit Application';
+        console.error('Submission error:', error);
+        alert('Something went wrong. Please try again.');
     }
 });
