@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Råtthjälpen Membership</title>
+</head>
+<body class="bg-blue-50 flex items-center justify-center min-h-screen p-4 md:p-12">
+
+<div class="max-w-2xl w-full bg-white rounded-3xl shadow-2xl overflow-hidden border border-blue-100 transition-all">
+
+  <div class="bg-blue-600 p-10 text-center">
+    <h1 class="text-3xl md:text-4xl font-extrabold text-white tracking-tight">Råtthjälpen</h1>
+    <p class="text-blue-100 mt-3 text-lg">Apply for membership and make a difference</p>
+  </div>
+
+  <form id="membershipForm" class="p-8 md:p-12 space-y-8">
+    <div class="grid grid-cols-1 gap-8">
+
+      <div>
+        <label class="block text-sm font-bold text-blue-900 uppercase tracking-wide mb-2">Full Name</label>
+        <input type="text" name="name" required placeholder="Enter your full name"
+               class="w-full px-6 py-4 rounded-xl border-2 border-blue-50 focus:border-blue-400 focus:ring-4 focus:ring-blue-100 outline-none transition-all text-lg">
+      </div>
+
+      <div>
+        <label class="block text-sm font-bold text-blue-900 uppercase tracking-wide mb-2">Email Address</label>
+        <input type="email" name="email" required placeholder="email@example.com"
+               class="w-full px-6 py-4 rounded-xl border-2 border-blue-50 focus:border-blue-400 focus:ring-4 focus:ring-blue-100 outline-none transition-all text-lg">
+      </div>
+
+      <div>
+        <label class="block text-sm font-bold text-blue-900 uppercase tracking-wide mb-2">Country</label>
+        <select name="country" required
+                class="w-full px-6 py-4 rounded-xl border-2 border-blue-50 focus:border-blue-400 focus:ring-4 focus:ring-blue-100 outline-none transition-all text-lg bg-white appearance-none cursor-pointer">
+          <option value="" disabled selected>Select your country</option>
+          <option value="Sweden">Sweden</option>
+          <option value="Norway">Norway</option>
+          <option value="Denmark">Denmark</option>
+          <option value="Finland">Finland</option>
+          <option value="United Kingdom">United Kingdom</option>
+          <option value="USA">USA</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+    </div>
+
+    <button type="submit" id="submitBtn"
+            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-5 rounded-2xl shadow-xl shadow-blue-200 transition-all transform active:scale-[0.98] text-xl mt-4">
+      Submit Application
+    </button>
+  </form>
+
+  <div id="successMsg" class="hidden p-12 text-center animate-fade-in">
+    <div class="text-6xl mb-4">✅</div>
+    <h2 class="text-2xl font-bold text-blue-900">Thank you!</h2>
+    <p class="text-blue-600 mt-2">Your request has been sent to Råtthjälpen.</p>
+    <button onclick="location.reload()" class="mt-6 text-blue-500 font-semibold underline">Send another</button>
+  </div>
+</div>
+
+</body>
+</html>
