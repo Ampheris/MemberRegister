@@ -4,7 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="55aec882-eee1-4350-9b85-f61c015da944" name="Changes" comment="Fix vite permissions" />
+    <list default="true" id="55aec882-eee1-4350-9b85-f61c015da944" name="Changes" comment="Updated html to import the ts data">
+      <change afterPath="$PROJECT_DIR$/vite.config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.github/workflows/deploy.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/deploy.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -142,7 +147,7 @@
       <option name="presentableId" value="Default" />
       <updated>1770925338038</updated>
       <workItem from="1770925339282" duration="3278000" />
-      <workItem from="1770928813382" duration="914000" />
+      <workItem from="1770928813382" duration="1369000" />
     </task>
     <task id="LOCAL−00001" summary="Updated project from metro to basic ts/vite/tailwind">
       <option name="closed" value="true" />
@@ -186,7 +191,14 @@
       <option name="presentableId" value="LOCAL−00006" />
       <updated>1770929451323</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL−00007" summary="Updated html to import the ts data">
+      <option name="closed" value="true" />
+      <created>1770929898876</created>
+      <option name="number" value="LOCAL−00007" />
+      <option name="presentableId" value="LOCAL−00007" />
+      <updated>1770929898876</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -197,6 +209,7 @@
     <MESSAGE value="moved project files" />
     <MESSAGE value="Fix package.json scripts" />
     <MESSAGE value="Fix vite permissions" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fix vite permissions" />
+    <MESSAGE value="Updated html to import the ts data" />
+    <option name="LAST_COMMIT_MESSAGE" value="Updated html to import the ts data" />
   </component>
 </project>
